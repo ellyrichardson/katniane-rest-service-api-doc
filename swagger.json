@@ -1,0 +1,304 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "These are the current endpoints of the Katniane REST Service.  You can find out more about Katniane REST Service at [Katniane REST Service repository](https://github.com/ellyrichardson/katniane-rest-service).",
+      "version": "1.0.0",
+      "title": "Katniane REST Service API Docs",
+      "termsOfService": "http://swagger.io/terms/",
+      "contact": {
+        "email": "elly.richardson18@gmail.com"
+      },
+      "license": {
+        "name": "Apache 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      }
+    },
+    "host": "127.0.0.1:3030",
+    "basePath": "/v1",
+    "tags": [
+      {
+        "name": "log",
+        "description": "Everything about logs",
+        "externalDocs": {
+            "description": "Find out more",
+            "url": "https://github.com/ellyrichardson/katniane-rest-service"
+          }
+      }
+    ],
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "paths": {
+      "/logs": {
+        "post": {
+          "tags": [
+            "log"
+          ],
+          "summary": "Add a new log to the chain",
+          "description": "",
+          "operationId": "saveLog",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Log that needs to be stored on chain",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Log"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "successful operation"
+            },
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      },
+      "/logs/{filename}/{date}": {
+        "get": {
+          "tags": [
+            "log"
+          ],
+          "summary": "Get logs by providing the log file name and the log date",
+          "description": "",
+          "operationId": "getLogsWithFilenameAndDate",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "filename",
+              "in": "path",
+              "description": "The file name in which the log resides. Example: db_log_attempts.log",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "date",
+              "in": "path",
+              "description": "The date (YYYY-MM-DD) in which the logs that reside in the file has. Example: 2022-02-04",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "400": {
+              "description": "Invalid filename supplied"
+            },
+            "404": {
+              "description": "filename not found"
+            }
+          }
+        }
+      }
+    },
+    "securityDefinitions": {},
+    "definitions": {
+      "Log": {
+        "type": "object",
+        "required": [
+          "filename",
+          "title",
+          "content"
+        ],
+        "properties": {
+          "filename": {
+            "type": "string",
+            "example": "db_login_attempts.log"
+          },
+          "title": {
+            "type": "string",
+            "example": "DB login attempt"
+          },
+          "content": {
+            "type": "string",
+            "example": "John Mark has 3 failed attempts with logging in to the DB"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "petId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "shipDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "Order Status",
+            "enum": [
+              "placed",
+              "approved",
+              "delivered"
+            ]
+          },
+          "complete": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "xml": {
+          "name": "Order"
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "Category"
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "userStatus": {
+            "type": "integer",
+            "format": "int32",
+            "description": "User Status"
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "Tag"
+        }
+      },
+      "Pet": {
+        "type": "object",
+        "required": [
+          "name",
+          "photoUrls"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "category": {
+            "$ref": "#/definitions/Category"
+          },
+          "name": {
+            "type": "string",
+            "example": "doggie"
+          },
+          "photoUrls": {
+            "type": "array",
+            "xml": {
+              "name": "photoUrl",
+              "wrapped": true
+            },
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "xml": {
+              "name": "tag",
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/definitions/Tag"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "pet status in the store",
+            "enum": [
+              "available",
+              "pending",
+              "sold"
+            ]
+          }
+        },
+        "xml": {
+          "name": "Pet"
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "externalDocs": {
+      "description": "Find out more about Swagger",
+      "url": "http://swagger.io"
+    }
+  }
